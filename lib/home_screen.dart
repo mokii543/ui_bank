@@ -14,12 +14,41 @@ class HomeScreen extends StatelessWidget {
       ),
       child: Scaffold(
         backgroundColor: AppColors.backgroundGray,
+        
+        // --- WIDGET BARU TAHAP AKHIR: Tombol QRIS & Navigasi Bawah ---
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {},
+          backgroundColor: AppColors.primaryBlueBrimo,
+          shape: const CircleBorder(),
+          elevation: 2,
+          child: const Icon(Icons.qr_code_scanner, color: Colors.white, size: 28),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: BottomAppBar(
+          color: Colors.white,
+          shape: const CircularNotchedRectangle(),
+          notchMargin: 6.0,
+          child: SizedBox(
+            height: 60,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavItem(Icons.home, 'Home', AppColors.primaryBlueBrimo),
+                _buildNavItem(Icons.receipt_long, 'Mutasi', Colors.grey),
+                const SizedBox(width: 40), // Ruang kosong untuk tombol QRIS di tengah
+                _buildNavItem(Icons.mail_outline, 'Aktivitas', Colors.grey),
+                _buildNavItem(Icons.person_outline, 'Akun', Colors.grey),
+              ],
+            ),
+          ),
+        ),
+        // -------------------------------------------------------------
+
         body: SingleChildScrollView(
           child: Column(
             children: [
               _buildBlueHeader(),
               
-              // Membungkus elemen di bawah header agar posisinya seragam naik ke atas
               Transform.translate(
                 offset: const Offset(0, -40),
                 child: Column(
@@ -29,7 +58,7 @@ class HomeScreen extends StatelessWidget {
                     _buildDompetDigitalSection(),
                     const SizedBox(height: 25),
                     _buildCatatanKeuanganSection(),
-                    const SizedBox(height: 40), // Jarak aman untuk tahap selanjutnya
+                    const SizedBox(height: 80), // Jarak ekstra agar konten tidak tertutup navigasi bawah
                   ],
                 ),
               ),
@@ -37,6 +66,19 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  // Widget khusus untuk ikon di Navigasi Bawah
+  Widget _buildNavItem(IconData icon, String label, Color color) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, color: color, size: 24),
+        const SizedBox(height: 4),
+        Text(label, style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.w500)),
+      ],
     );
   }
 
@@ -172,9 +214,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // --- WIDGET BARU TAHAP 4 ---
-
-  // Section Dompet Digital
   Widget _buildDompetDigitalSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,7 +223,6 @@ class HomeScreen extends StatelessWidget {
           child: Text('Dompet Digital', style: TextStyle(color: AppColors.primaryDarkBlue, fontSize: 16, fontWeight: FontWeight.bold)),
         ),
         const SizedBox(height: 15),
-        // Menggunakan SingleChildScrollView agar list card bisa digeser ke kiri/kanan
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -201,7 +239,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // Desain Kartu Dompet Digital
   Widget _buildDompetCard(String title, String status, IconData icon, Color iconColor, bool isLink) {
     return Container(
       width: 180,
@@ -232,7 +269,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // Section Catatan Keuangan
   Widget _buildCatatanKeuanganSection() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -255,7 +291,6 @@ class HomeScreen extends StatelessWidget {
             ),
             child: Row(
               children: [
-                // Pemasukan
                 Expanded(
                   child: Column(
                     children: [
@@ -272,9 +307,7 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                // Garis Pembatas Tengah
                 Container(height: 40, width: 1, color: Colors.grey[300]),
-                // Pengeluaran
                 Expanded(
                   child: Column(
                     children: [
