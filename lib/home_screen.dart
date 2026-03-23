@@ -19,8 +19,20 @@ class HomeScreen extends StatelessWidget {
             children: [
               _buildBlueHeader(),
               
-              // Memanggil fungsi Kotak Menu Utama yang baru
-              _buildMainMenu(),
+              // Membungkus elemen di bawah header agar posisinya seragam naik ke atas
+              Transform.translate(
+                offset: const Offset(0, -40),
+                child: Column(
+                  children: [
+                    _buildMainMenu(),
+                    const SizedBox(height: 25),
+                    _buildDompetDigitalSection(),
+                    const SizedBox(height: 25),
+                    _buildCatatanKeuanganSection(),
+                    const SizedBox(height: 40), // Jarak aman untuk tahap selanjutnya
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -30,7 +42,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildBlueHeader() {
     return Container(
-      padding: const EdgeInsets.only(top: 50, left: 20, right: 20, bottom: 60), // Bottom padding ditambah agar lebih luas
+      padding: const EdgeInsets.only(top: 50, left: 20, right: 20, bottom: 60),
       decoration: const BoxDecoration(
         color: AppColors.primaryBlueBrimo,
         borderRadius: BorderRadius.only(
@@ -105,8 +117,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // --- WIDGET BARU TAHAP 3 ---
-
   Widget _buildMainMenu() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -114,19 +124,10 @@ class HomeScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 10,
-            offset: Offset(0, 5),
-          ),
-        ],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 5))],
       ),
-      // Efek translation agar kotak putih ini naik menutupi bagian bawah header biru
-      transform: Matrix4.translationValues(0.0, -40.0, 0.0),
       child: Column(
         children: [
-          // Baris Ikon Pertama
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -138,7 +139,6 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 25),
-          // Baris Ikon Kedua
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -154,30 +154,144 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // Template untuk masing-masing ikon menu BRImo
   Widget _buildMenuIcon(IconData icon, String label, Color bgColor, Color iconColor) {
     return SizedBox(
-      width: 70, // Menetapkan lebar tetap agar teks panjang tidak merusak layout
+      width: 70,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: bgColor,
-              shape: BoxShape.circle, // Bentuk background bulat
-            ),
+            decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
             child: Icon(icon, color: iconColor, size: 28),
           ),
           const SizedBox(height: 10),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 12, 
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
-              height: 1.2, // Jarak antar baris teks
+          Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black87, height: 1.2)),
+        ],
+      ),
+    );
+  }
+
+  // --- WIDGET BARU TAHAP 4 ---
+
+  // Section Dompet Digital
+  Widget _buildDompetDigitalSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: Text('Dompet Digital', style: TextStyle(color: AppColors.primaryDarkBlue, fontSize: 16, fontWeight: FontWeight.bold)),
+        ),
+        const SizedBox(height: 15),
+        // Menggunakan SingleChildScrollView agar list card bisa digeser ke kiri/kanan
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          clipBehavior: Clip.none,
+          child: Row(
+            children: [
+              _buildDompetCard('GoPay', 'Hubungkan', Icons.account_balance_wallet, Colors.teal, true),
+              const SizedBox(width: 15),
+              _buildDompetCard('OVO', 'Segera Hadir', Icons.account_balance_wallet, Colors.purple, false),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Desain Kartu Dompet Digital
+  Widget _buildDompetCard(String title, String status, IconData icon, Color iconColor, bool isLink) {
+    return Container(
+      width: 180,
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 5, offset: Offset(0, 2))],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(color: iconColor.withOpacity(0.1), shape: BoxShape.circle),
+            child: Icon(icon, color: iconColor, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              const SizedBox(height: 2),
+              Text(status, style: TextStyle(color: isLink ? AppColors.primaryBlueBrimo : Colors.grey, fontSize: 12, fontWeight: isLink ? FontWeight.bold : FontWeight.normal)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Section Catatan Keuangan
+  Widget _buildCatatanKeuanganSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: const [
+              Text('Catatan Keuangan', style: TextStyle(color: AppColors.primaryDarkBlue, fontSize: 16, fontWeight: FontWeight.bold)),
+              Text('Lihat Detail', style: TextStyle(color: AppColors.primaryBlueBrimo, fontSize: 14, fontWeight: FontWeight.w500)),
+            ],
+          ),
+          const SizedBox(height: 15),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 5, offset: Offset(0, 2))],
+            ),
+            child: Row(
+              children: [
+                // Pemasukan
+                Expanded(
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(Icons.arrow_downward, color: Colors.green, size: 16),
+                          SizedBox(width: 5),
+                          Text('Pemasukan', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      const Text('Rp0', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    ],
+                  ),
+                ),
+                // Garis Pembatas Tengah
+                Container(height: 40, width: 1, color: Colors.grey[300]),
+                // Pengeluaran
+                Expanded(
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(Icons.arrow_upward, color: Colors.red, size: 16),
+                          SizedBox(width: 5),
+                          Text('Pengeluaran', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      const Text('Rp38.350.500', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ],
